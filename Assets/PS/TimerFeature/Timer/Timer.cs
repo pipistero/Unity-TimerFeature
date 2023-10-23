@@ -11,7 +11,7 @@ namespace PS.TimerFeature.Timer
         public event Action TimerPaused;
         public event Action TimerUnpaused;
         
-        public TimerType Type { get; }
+        public TimerType Type { get; private set; }
         public float RemainingTime { get; private set; }
         public bool IsPaused { get; private set; }
         
@@ -125,6 +125,12 @@ namespace PS.TimerFeature.Timer
 
         #region Internal timer work
 
+        private void CheckFinish()
+        {
+            if (RemainingTime <= 0f)
+                Stop();
+        }
+        
         private void OnUpdateTimerTicked(float deltaTime)
         {
             if (IsPaused)
@@ -136,17 +142,7 @@ namespace PS.TimerFeature.Timer
 
         private void OnSecondTimerTicked()
         {
-            if (IsPaused)
-                return;
-            
-            SetRemainingTime(RemainingTime -= 1f);
-            CheckFinish();
-        }
-
-        private void CheckFinish()
-        {
-            if (RemainingTime <= 0f)
-                Stop();
+            OnUpdateTimerTicked(1f);
         }
 
         #endregion
